@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dance Posture Recognition - 跳舞姿勢識別系統</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Dance Posture Recognition</h1>
+            <h2>跳舞姿勢識別系統</h2>
+        </header>
+
+        <main>
+            <!-- Video Upload Section -->
+            <section class="upload-section">
+                <h3>第一步：上載同標記參考姿勢</h3>
+                <p>上載一個跳舞影片，然後標記你想練習嘅關鍵姿勢</p>
+                <div class="upload-area">
+                    <input type="file" id="videoInput" accept="video/*">
+                    <label for="videoInput" class="upload-label">
+                        <div class="upload-icon">📹</div>
+                        <span>選擇影片檔案</span>
+                    </label>
+                    <video id="referenceVideo" controls style="display: none;"></video>
+                </div>
+
+                <!-- Pose Marking Controls -->
+                <div class="pose-marking-controls" id="poseMarkingControls" style="display: none;">
+                    <h4>標記關鍵姿勢</h4>
+                    <div class="video-controls-row">
+                        <button id="playVideoBtn" class="btn-small">播放</button>
+                        <button id="pauseVideoBtn" class="btn-small">暫停</button>
+                        <input type="range" id="videoScrubber" min="0" max="100" value="0" step="0.1">
+                        <span id="currentTime">0:00</span>
+                    </div>
+
+                    <div class="marking-buttons">
+                        <button id="markPose1Btn" class="btn-mark">標記為姿勢1</button>
+                        <button id="clearPosesBtn" class="btn-secondary">清除全部</button>
+                    </div>
+
+                    <!-- Marked Poses Display -->
+                    <div class="marked-poses" id="markedPoses">
+                        <div class="pose-item" id="pose1Item">
+                            <span class="pose-label">姿勢1:</span>
+                            <span class="pose-status" id="pose1Status">未標記</span>
+                            <span class="pose-time" id="pose1Time"></span>
+                            <button id="showPose1DetailsBtn" class="btn-small" style="display: none;">顯示詳情</button>
+                        </div>
+                    </div>
+
+                    <!-- Debug Panel -->
+                    <div class="debug-panel" id="debugPanel" style="display: none;">
+                        <h5>除錯信息</h5>
+                        <div class="debug-info">
+                            <div id="debugMarkedPoses">已標記姿勢: 0</div>
+                            <div id="debugCurrentPose">當前姿勢: 未檢測到</div>
+                            <div id="debugComparison">最後比較: 無</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Comparison Section -->
+            <section class="comparison-section">
+                <h3>第二步：比較同跟隨</h3>
+                <p>睇住左邊嘅參考，跟住右邊做</p>
+                <div class="camera-controls">
+                    <button id="startCameraBtn" class="btn-primary">啟動相機</button>
+                    <button id="stopCameraBtn" class="btn-secondary" disabled>停止相機</button>
+                </div>
+
+                <div class="dual-video-container">
+                    <!-- Target Pose Side -->
+                    <div class="video-panel">
+                        <h4 id="leftPanelTitle">參考跳舞</h4>
+                        <!-- Reference Video Container -->
+                        <div id="referenceVideoContainer" class="video-wrapper">
+                            <canvas id="referencePoseCanvas"></canvas>
+                        </div>
+
+                        <!-- Marked Pose Container -->
+                        <div id="markedPoseContainer" class="video-wrapper" style="display: none;">
+                            <canvas id="markedPoseCanvas" width="400" height="300"></canvas>
+                            <div id="currentMarkedPose" style="text-align: center; margin-top: 10px; font-weight: bold;"></div>
+                        </div>
+
+                        <!-- Simple Pose Selector -->
+                        <div class="pose-selector" id="poseSelector" style="display: none;">
+                            <button id="showPose1Btn" class="btn-small">顯示姿勢1</button>
+                        </div>
+
+
+                    </div>
+
+                    <!-- User Camera Side -->
+                    <div class="video-panel">
+                        <h4>你嘅表現</h4>
+                        <div class="video-wrapper">
+                            <video id="userVideo" autoplay playsinline></video>
+                            <canvas id="userPoseCanvas"></canvas>
+                        </div>
+                        <div class="video-controls">
+                            <button id="mirrorToggle" class="btn-small">鏡像視圖</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Comparison Indicators -->
+                <div class="comparison-indicators">
+                    <div class="indicator-item">
+                        <div class="indicator-light" id="poseMatchIndicator"></div>
+                        <span>姿勢匹配</span>
+                    </div>
+                    <div class="indicator-item">
+                        <div class="indicator-light" id="timingIndicator"></div>
+                        <span>時機</span>
+                    </div>
+                    <div class="indicator-item">
+                        <div class="indicator-light" id="accuracyIndicator"></div>
+                        <span>準確度</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Score Display -->
+            <section class="score-section">
+                <h3>即時姿勢分數</h3>
+                <div class="score-display">
+                    <div class="pose-scores" id="poseScores">
+                        <div class="pose-score-item" id="pose1ScoreItem" style="display: none;">
+                            <div class="pose-score-label">姿勢1</div>
+                            <div class="pose-score-circle" id="pose1ScoreCircle">
+                                <span class="pose-score-text" id="pose1ScoreText">--</span>
+                            </div>
+                            <div class="pose-score-feedback" id="pose1Feedback">未檢測到</div>
+                        </div>
+                    </div>
+
+                    <div class="overall-feedback" id="overallFeedback">先標記姿勢，然後啟動相機</div>
+                </div>
+            </section>
+        </main>
+
+        <!-- Progress Indicator -->
+        <div class="progress-container">
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+            <div class="progress-text" id="progressText">上載影片開始</div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/pose/pose.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
