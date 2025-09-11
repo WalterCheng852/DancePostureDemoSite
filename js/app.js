@@ -10,6 +10,16 @@ class DancePostureApp {
         this.isReferencePlaying = false;
         this.isMirrored = false;
         this.syncMode = false;
+        
+        // Common MediaPipe options for better distance detection
+        this.poseOptions = {
+            modelComplexity: 2,  // Higher model complexity for better accuracy at distance
+            smoothLandmarks: true,
+            enableSegmentation: false,
+            smoothSegmentation: false,
+            minDetectionConfidence: 0.3,  // Lower threshold for distant subjects
+            minTrackingConfidence: 0.3   // Lower threshold for better tracking
+        };
 
         // Initialize elements
         this.initializeElements();
@@ -122,14 +132,7 @@ class DancePostureApp {
                 }
             });
 
-            this.pose.setOptions({
-                modelComplexity: 1,
-                smoothLandmarks: true,
-                enableSegmentation: false,
-                smoothSegmentation: false,
-                minDetectionConfidence: 0.5,
-                minTrackingConfidence: 0.5
-            });
+            this.pose.setOptions(this.poseOptions);
 
             this.pose.onResults(this.onPoseResults.bind(this));
 
@@ -139,14 +142,7 @@ class DancePostureApp {
                 locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/pose/${file}`
             });
 
-            this.referencePose.setOptions({
-                modelComplexity: 1,
-                smoothLandmarks: true,
-                enableSegmentation: false,
-                smoothSegmentation: false,
-                minDetectionConfidence: 0.5,
-                minTrackingConfidence: 0.5
-            });
+            this.referencePose.setOptions(this.poseOptions);
 
             this.referencePose.onResults(this.onReferencePoseResults.bind(this));
         } catch (error) {
@@ -198,14 +194,7 @@ class DancePostureApp {
                     }
                 });
 
-                this.pose.setOptions({
-                    modelComplexity: 1,
-                    smoothLandmarks: true,
-                    enableSegmentation: false,
-                    smoothSegmentation: false,
-                    minDetectionConfidence: 0.5,
-                    minTrackingConfidence: 0.5
-                });
+                this.pose.setOptions(this.poseOptions);
 
                 this.pose.onResults(this.onPoseResults.bind(this));
             }
@@ -297,47 +286,129 @@ class DancePostureApp {
         }
     }
 
-    drawPose(landmarks) {
-        const canvas = this.userPoseCanvas;
+    // Common pose connections for reuse
+    static POSE_CONNECTIONS = [
+        [11, 12], [11, 13], [13, 15], [15, 17], [15, 19], [15, 21],
+        [12, 14], [14, 16], [16, 18], [16, 20], [16, 22],
+        [11, 23], [12, 24], [23, 24],
+        [23, 25], [25, 27], [27, 29], [29, 31],
+        [24, 26], [26, 28], [28, 30], [30, 32]
+    ];
+
+    // Enhanced pose drawing with adaptive scaling
+    drawPoseEnhanced(canvas, landmarks, color = '#00ff00', showNumbers = false, title = '') {
         const ctx = canvas.getContext('2d');
-
-        canvas.width = this.userVideo.videoWidth;
-        canvas.height = this.userVideo.videoHeight;
-
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-        // Draw pose landmarks
-        ctx.fillStyle = '#00ff00';
-        ctx.strokeStyle = '#00ff00';
-        ctx.lineWidth = 2;
-
-        // Draw connections
-        const connections = [
-            [11, 12], [11, 13], [13, 15], [15, 17], [15, 19], [15, 21],
-            [12, 14], [14, 16], [16, 18], [16, 20], [16, 22],
-            [11, 23], [12, 24], [23, 24],
-            [23, 25], [25, 27], [27, 29], [29, 31],
-            [24, 26], [26, 28], [28, 30], [30, 32]
-        ];
-
-        connections.forEach(([start, end]) => {
+        const canvasWidth = canvas.width;
+        const canvasHeight = canvas.height;
+        
+        ctx.clearRect(0, 0, canvasWidth, canvasHeight);
+        
+        // Calculate pose bounding box for adaptive scaling
+        const poseBounds = this.calculatePoseBounds(landmarks);
+        const scaleMultiplier = this.calculateScaleMultiplier(poseBounds, canvasWidth, canvasHeight);
+        
+        // Adaptive line width and point size based on scale
+        const lineWidth = Math.max(2, Math.min(6, scaleMultiplier * 3));
+        const pointRadius = Math.max(3, Math.min(8, scaleMultiplier * 4));
+        
+        ctx.strokeStyle = color;
+        ctx.fillStyle = color;
+        ctx.lineWidth = lineWidth;
+        ctx.lineCap = 'round';
+        ctx.lineJoin = 'round';
+        
+        // Draw connections with enhanced visibility
+        DancePostureApp.POSE_CONNECTIONS.forEach(([start, end]) => {
             const startLandmark = landmarks[start];
             const endLandmark = landmarks[end];
-
-            if (startLandmark && endLandmark) {
+            
+            if (startLandmark && endLandmark && 
+                startLandmark.visibility > 0.5 && endLandmark.visibility > 0.5) {
                 ctx.beginPath();
-                ctx.moveTo(startLandmark.x * canvas.width, startLandmark.y * canvas.height);
-                ctx.lineTo(endLandmark.x * canvas.width, endLandmark.y * canvas.height);
+                ctx.moveTo(startLandmark.x * canvasWidth, startLandmark.y * canvasHeight);
+                ctx.lineTo(endLandmark.x * canvasWidth, endLandmark.y * canvasHeight);
                 ctx.stroke();
             }
         });
-
-        // Draw landmarks
-        landmarks.forEach(landmark => {
-            ctx.beginPath();
-            ctx.arc(landmark.x * canvas.width, landmark.y * canvas.height, 4, 0, 2 * Math.PI);
-            ctx.fill();
+        
+        // Draw landmarks with enhanced visibility
+        landmarks.forEach((landmark, index) => {
+            if (landmark && landmark.visibility > 0.5) {
+                ctx.beginPath();
+                ctx.arc(
+                    landmark.x * canvasWidth, 
+                    landmark.y * canvasHeight, 
+                    pointRadius, 0, 2 * Math.PI
+                );
+                ctx.fill();
+                
+                // Add numbers for key points if requested
+                if (showNumbers && [0, 11, 12, 13, 14, 15, 16, 23, 24].includes(index)) {
+                    ctx.fillStyle = '#ffffff';
+                    ctx.font = `${Math.max(8, pointRadius)}px Arial`;
+                    ctx.textAlign = 'center';
+                    ctx.fillText(
+                        index.toString(), 
+                        landmark.x * canvasWidth, 
+                        landmark.y * canvasHeight + 3
+                    );
+                    ctx.fillStyle = color;
+                }
+            }
         });
+        
+        // Add title if provided
+        if (title) {
+            ctx.fillStyle = '#333';
+            ctx.font = `${Math.max(12, lineWidth * 3)}px Arial`;
+            ctx.textAlign = 'center';
+            ctx.fillText(title, canvasWidth / 2, 20);
+        }
+    }
+    
+    // Calculate pose bounding box for adaptive scaling
+    calculatePoseBounds(landmarks) {
+        const validLandmarks = landmarks.filter(l => l && l.visibility > 0.5);
+        if (validLandmarks.length === 0) return null;
+        
+        const xs = validLandmarks.map(l => l.x);
+        const ys = validLandmarks.map(l => l.y);
+        
+        return {
+            minX: Math.min(...xs),
+            maxX: Math.max(...xs),
+            minY: Math.min(...ys),
+            maxY: Math.max(...ys),
+            width: Math.max(...xs) - Math.min(...xs),
+            height: Math.max(...ys) - Math.min(...ys)
+        };
+    }
+    
+    // Calculate scale multiplier based on pose size
+    calculateScaleMultiplier(poseBounds, canvasWidth, canvasHeight) {
+        if (!poseBounds) return 1;
+        
+        // If pose is very small (person far away), increase multiplier
+        const posePixelWidth = poseBounds.width * canvasWidth;
+        const posePixelHeight = poseBounds.height * canvasHeight;
+        
+        // Base scale on the smaller dimension to avoid over-scaling
+        const avgPoseSize = (posePixelWidth + posePixelHeight) / 2;
+        const canvasAvgSize = (canvasWidth + canvasHeight) / 2;
+        const sizeRatio = avgPoseSize / canvasAvgSize;
+        
+        // If pose is less than 20% of canvas, scale up the visual elements
+        if (sizeRatio < 0.2) {
+            return Math.min(3, 0.2 / sizeRatio); // Max 3x multiplier
+        }
+        return 1;
+    }
+    
+    // Simplified drawPose using enhanced method
+    drawPose(landmarks) {
+        this.userPoseCanvas.width = this.userVideo.videoWidth;
+        this.userPoseCanvas.height = this.userVideo.videoHeight;
+        this.drawPoseEnhanced(this.userPoseCanvas, landmarks, '#00ff00');
     }
 
     calculatePoseSimilarity(pose1, pose2) {
@@ -488,22 +559,15 @@ class DancePostureApp {
                     }
                 });
 
-                tempPose.setOptions({
-                    modelComplexity: 1,
-                    smoothLandmarks: true,
-                    enableSegmentation: false,
-                    smoothSegmentation: false,
-                    minDetectionConfidence: 0.5,
-                    minTrackingConfidence: 0.5
-                });
+                tempPose.setOptions(this.poseOptions);
 
                 tempPose.onResults((results) => {
                     if (results.poseLandmarks) {
                         detectedPose = results.poseLandmarks;
                         console.log('Real pose detected from video frame:', detectedPose.length, 'landmarks');
                     } else {
-                        console.log('No pose detected in video frame, using simulated data');
-                        detectedPose = this.simulatePoseExtraction();
+                        console.log('No pose detected in video frame - please try a different frame with clearer pose');
+                        detectedPose = null; // Return null if no pose detected
                     }
                     resolve();
                 });
@@ -514,6 +578,11 @@ class DancePostureApp {
 
             // Wait for pose detection to complete
             await poseDetectionPromise;
+            
+            // Check if pose was successfully detected
+            if (!detectedPose) {
+                throw new Error('No pose detected in this frame. Please try a different frame with a clearer pose.');
+            }
 
             // Store marked pose (single pose only)
             const currentTime = this.referenceVideo.currentTime;
@@ -761,62 +830,9 @@ class DancePostureApp {
         document.body.appendChild(modal);
     }
 
+    // Simplified drawPosePreview using enhanced method
     drawPosePreview(canvas, landmarks) {
-        const ctx = canvas.getContext('2d');
-
-        // Clear canvas
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-        // Draw pose landmarks
-        ctx.fillStyle = '#0066ff';
-        ctx.strokeStyle = '#0066ff';
-        ctx.lineWidth = 3;
-
-        // Draw connections first
-        const connections = [
-            [11, 12], [11, 13], [13, 15], [15, 17], [15, 19], [15, 21],
-            [12, 14], [14, 16], [16, 18], [16, 20], [16, 22],
-            [11, 23], [12, 24], [23, 24],
-            [23, 25], [25, 27], [27, 29], [29, 31],
-            [24, 26], [26, 28], [28, 30], [30, 32]
-        ];
-
-        connections.forEach(([start, end]) => {
-            const startLandmark = landmarks[start];
-            const endLandmark = landmarks[end];
-
-            if (startLandmark && endLandmark) {
-                // MediaPipe landmarks are already in 0-1 normalized coordinates
-                ctx.beginPath();
-                ctx.moveTo(startLandmark.x * canvas.width, startLandmark.y * canvas.height);
-                ctx.lineTo(endLandmark.x * canvas.width, endLandmark.y * canvas.height);
-                ctx.stroke();
-            }
-        });
-
-        // Draw landmarks
-        landmarks.forEach((landmark, index) => {
-            if (landmark) {
-                ctx.beginPath();
-                ctx.arc(landmark.x * canvas.width, landmark.y * canvas.height, 4, 0, 2 * Math.PI);
-                ctx.fill();
-
-                // Add landmark numbers for key points
-                if ([0, 11, 12, 13, 14, 15, 16, 23, 24].includes(index)) {
-                    ctx.fillStyle = '#ffffff';
-                    ctx.font = '10px Arial';
-                    ctx.textAlign = 'center';
-                    ctx.fillText(index.toString(), landmark.x * canvas.width, landmark.y * canvas.height + 3);
-                    ctx.fillStyle = '#0066ff';
-                }
-            }
-        });
-
-        // Add title
-        ctx.fillStyle = '#333';
-        ctx.font = '14px Arial';
-        ctx.textAlign = 'center';
-        ctx.fillText('Real MediaPipe Detection', canvas.width / 2, 20);
+        this.drawPoseEnhanced(canvas, landmarks, '#0066ff', true, 'Real MediaPipe Detection');
     }
 
     updateDebugInfo() {
@@ -867,62 +883,9 @@ class DancePostureApp {
         this.drawMarkedPose(poseData.landmarks);
     }
 
+    // Simplified drawMarkedPose using enhanced method
     drawMarkedPose(landmarks) {
-        const canvas = this.markedPoseCanvas;
-        const ctx = canvas.getContext('2d');
-
-        // Clear canvas
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-        // Draw pose landmarks
-        ctx.fillStyle = '#48bb78'; // Green for marked poses
-        ctx.strokeStyle = '#48bb78';
-        ctx.lineWidth = 3;
-
-        // Draw connections
-        const connections = [
-            [11, 12], [11, 13], [13, 15], [15, 17], [15, 19], [15, 21],
-            [12, 14], [14, 16], [16, 18], [16, 20], [16, 22],
-            [11, 23], [12, 24], [23, 24],
-            [23, 25], [25, 27], [27, 29], [29, 31],
-            [24, 26], [26, 28], [28, 30], [30, 32]
-        ];
-
-        connections.forEach(([start, end]) => {
-            const startLandmark = landmarks[start];
-            const endLandmark = landmarks[end];
-
-            if (startLandmark && endLandmark) {
-                ctx.beginPath();
-                ctx.moveTo(startLandmark.x * canvas.width, startLandmark.y * canvas.height);
-                ctx.lineTo(endLandmark.x * canvas.width, endLandmark.y * canvas.height);
-                ctx.stroke();
-            }
-        });
-
-        // Draw landmarks
-        landmarks.forEach((landmark, index) => {
-            if (landmark) {
-                ctx.beginPath();
-                ctx.arc(landmark.x * canvas.width, landmark.y * canvas.height, 4, 0, 2 * Math.PI);
-                ctx.fill();
-
-                // Add landmark numbers for key points
-                if ([0, 11, 12, 13, 14, 15, 16, 23, 24].includes(index)) {
-                    ctx.fillStyle = '#ffffff';
-                    ctx.font = '10px Arial';
-                    ctx.textAlign = 'center';
-                    ctx.fillText(index.toString(), landmark.x * canvas.width, landmark.y * canvas.height + 3);
-                    ctx.fillStyle = '#48bb78';
-                }
-            }
-        });
-
-        // Add title
-        ctx.fillStyle = '#333';
-        ctx.font = '12px Arial';
-        ctx.textAlign = 'center';
-        ctx.fillText('Target Pose', canvas.width / 2, 15);
+        this.drawPoseEnhanced(this.markedPoseCanvas, landmarks, '#48bb78', false, 'Target Pose');
     }
 
     switchToMarkedPoseView() {
@@ -967,47 +930,11 @@ class DancePostureApp {
         }
     }
 
+    // Simplified drawReferencePose using enhanced method
     drawReferencePose(landmarks) {
-        const canvas = this.referencePoseCanvas;
-        const ctx = canvas.getContext('2d');
-
-        canvas.width = this.referenceVideo.videoWidth;
-        canvas.height = this.referenceVideo.videoHeight;
-
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-        // Draw pose landmarks
-        ctx.fillStyle = '#0066ff';
-        ctx.strokeStyle = '#0066ff';
-        ctx.lineWidth = 2;
-
-        // Draw connections
-        const connections = [
-            [11, 12], [11, 13], [13, 15], [15, 17], [15, 19], [15, 21],
-            [12, 14], [14, 16], [16, 18], [16, 20], [16, 22],
-            [11, 23], [12, 24], [23, 24],
-            [23, 25], [25, 27], [27, 29], [29, 31],
-            [24, 26], [26, 28], [28, 30], [30, 32]
-        ];
-
-        connections.forEach(([start, end]) => {
-            const startLandmark = landmarks[start];
-            const endLandmark = landmarks[end];
-
-            if (startLandmark && endLandmark) {
-                ctx.beginPath();
-                ctx.moveTo(startLandmark.x * canvas.width, startLandmark.y * canvas.height);
-                ctx.lineTo(endLandmark.x * canvas.width, endLandmark.y * canvas.height);
-                ctx.stroke();
-            }
-        });
-
-        // Draw landmarks
-        landmarks.forEach(landmark => {
-            ctx.beginPath();
-            ctx.arc(landmark.x * canvas.width, landmark.y * canvas.height, 4, 0, 2 * Math.PI);
-            ctx.fill();
-        });
+        this.referencePoseCanvas.width = this.referenceVideo.videoWidth;
+        this.referencePoseCanvas.height = this.referenceVideo.videoHeight;
+        this.drawPoseEnhanced(this.referencePoseCanvas, landmarks, '#0066ff');
     }
 
     // Process reference video frame for pose detection

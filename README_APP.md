@@ -4,8 +4,9 @@
 ### How to Use / 使用方法
 
 1. **Open the App** / **開啟應用程式**
-   - Open `index.html` in your web browser
-   - 在瀏覽器中開啟 `index.html` 檔案
+  npx http-server -p 5500 
+  python3  -m http.server 8000
+
 
 2. **Upload Reference Video** / **上載參考影片**
    - Click "Choose Video File" and select a dance video (MP4 format)
