@@ -42,7 +42,7 @@ A web-based application that helps users learn dance movements by comparing thei
 7. **Horizontal Layout**: Pose info, scores, and controls all displayed in clean horizontal lines
 8. **Smart Progression**: Single pose ends practice, multiple poses advance to next
 9. **Real-time Score Display**: Live scoring during practice with integrated controls
-10. **Easy Restart**: Practice area stays visible with restart button after completion
+10. **Easy Restart**: Click "✅ 結束練習" to immediately reselect poses and start again
 
 ## Technology
 
@@ -128,18 +128,18 @@ A web-based application that helps users learn dance movements by comparing thei
   - Multiple poses → Click "下一個姿勢" to advance to next pose
 - **In-camera animation**: Smooth countdown animation (2 seconds) appears only in your camera area
 - **Unified control panel**: Camera and practice controls grouped together in one area
+- **Clear landmark display**: White background for better pose landmark visibility
+- **Clean pose display**: Pose names shown below video panels without overlaying landmarks
 - Left panel shows current target pose (blue skeleton)
 - Right panel shows your live camera feed with pose overlay (green skeleton)
 - Use "上一個姿勢" / "下一個姿勢" in the control panel to manually navigate between poses
 
-**Step 5: Review Results & Restart**
-- **Practice area stays visible** after completion - no more disappearing interface!
-- **In-camera animations** with 2-second countdown appear only in your camera area
-- View your final scores for each practiced pose
-- Get overall performance feedback
-- **Click "🔄 重新練習" to practice the same poses again** (button now visible)
-- Or click "✅ 結束練習" to finish and return to pose selection
-- **Scores remain integrated in practice area** for continuous visibility
+**Step 5: End Practice & Restart**
+- **Click "✅ 結束練習"** to immediately return to pose selection
+- **No intermediate screens** - directly back to selecting poses
+- **All checkboxes reset** - can reselect any poses you want
+- **Camera stops automatically** - ready for next practice session
+- **Start over anytime** - practice the same poses or try different ones
 
 ### Controls
 
@@ -169,8 +169,7 @@ A web-based application that helps users learn dance movements by comparing thei
 | **Unified Controls** | Camera and practice controls in one area |
 | **Real-time Scores** | Live score display during practice |
 | **Prev/Next Pose** | Manually navigate between poses during practice |
-| **🔄 重新練習** | Practice the same poses again (stays visible after completion) |
-| **✅ 結束練習** | End practice session and view results |
+| **✅ 結束練習** | End practice and return to pose selection to choose again |
 | **Start/Stop Camera** | Begin or end live pose detection |
 | **Mirror Toggle** | Switch between normal and mirrored view |
 | **Back to Video Mode** | Return to original video mode |

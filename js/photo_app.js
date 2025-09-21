@@ -311,6 +311,9 @@ class PhotoModeApp {
     showPoseSelection() {
         this.detectedPosesGrid.innerHTML = '';
 
+        // Reset selected poses
+        this.selectedPoses = [];
+
         this.detectedPoses.forEach((pose, index) => {
             const poseItem = document.createElement('div');
             poseItem.className = 'detected-pose-item';
@@ -356,6 +359,7 @@ class PhotoModeApp {
         // Add event listeners for checkboxes
         const checkboxes = this.detectedPosesGrid.querySelectorAll('.pose-checkbox');
         checkboxes.forEach(checkbox => {
+            checkbox.checked = false; // Ensure all checkboxes are unchecked
             checkbox.addEventListener('change', this.updateSelection.bind(this));
         });
     }
@@ -481,35 +485,8 @@ class PhotoModeApp {
     finishPractice() {
         this.stopCamera();
 
-        // Keep practice section visible, just show completion state
-        this.showPracticeSummary();
-        this.updateProgress(100, '練習完成！查看你的成績');
-
-        // Update UI to show completion state
-        if (this.currentPoseLabel) {
-            this.currentPoseLabel.textContent = '練習完成！';
-        }
-        if (this.poseNameDisplay) {
-            this.poseNameDisplay.textContent = '所有姿勢練習完成';
-        }
-
-
-        // Show restart button and hide finish button
-        if (this.restartPracticeBtn) {
-            this.restartPracticeBtn.style.display = 'inline-block';
-            this.restartPracticeBtn.textContent = '🔄 重新練習';
-        }
-        if (this.finishPracticeBtn) {
-            this.finishPracticeBtn.style.display = 'none';
-        }
-
-        // Hide unified controls
-        if (this.unifiedControls) {
-            this.unifiedControls.style.display = 'none';
-        }
-
-        // Update overall feedback
-        this.updateOverallFeedback(null, this.practiceOverallFeedback);
+        // Go back to pose selection instead of showing completion
+        this.restartPractice();
     }
 
     showPracticeSummary() {
@@ -948,6 +925,14 @@ class PhotoModeApp {
         // Reset camera if active
         if (this.isCameraActive) {
             this.stopCamera();
+        }
+
+        // Reset pose selection state
+        this.startPracticeBtn.disabled = true;
+
+        // Re-populate pose selection if poses exist
+        if (this.detectedPoses.length > 0) {
+            this.showPoseSelection();
         }
 
         this.updateProgress(50, '準備重新練習...');
