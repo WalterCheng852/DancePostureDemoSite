@@ -14,8 +14,17 @@
         </header>
 
         <main>
+            <!-- Mode Selection -->
+            <section class="mode-selection">
+                <h3>選擇練習模式</h3>
+                <div class="mode-buttons">
+                    <button id="videoModeBtn" class="btn-primary">影片模式 (原有)</button>
+                    <button id="photoModeBtn" class="btn-secondary">照片模式 (新功能)</button>
+                </div>
+            </section>
+
             <!-- Video Upload Section -->
-            <section class="upload-section">
+            <section class="upload-section" id="videoModeSection" style="display: none;">
                 <h3>第一步：上載同標記參考姿勢</h3>
                 <p>上載一個跳舞影片，然後標記你想練習嘅關鍵姿勢</p>
                 <div class="upload-area">
@@ -111,18 +120,7 @@
 
                 <!-- Comparison Indicators -->
                 <div class="comparison-indicators">
-                    <div class="indicator-item">
-                        <div class="indicator-light" id="poseMatchIndicator"></div>
-                        <span>姿勢匹配</span>
-                    </div>
-                    <div class="indicator-item">
-                        <div class="indicator-light" id="timingIndicator"></div>
-                        <span>時機</span>
-                    </div>
-                    <div class="indicator-item">
-                        <div class="indicator-light" id="accuracyIndicator"></div>
-                        <span>準確度</span>
-                    </div>
+                    
                 </div>
             </section>
 

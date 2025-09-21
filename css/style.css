@@ -74,7 +74,7 @@ body::before {
    =================================== */
 header {
     text-align: center;
-    margin-bottom: 40px;
+    margin-bottom: 25px;
     position: relative;
     z-index: 10;
 }
@@ -143,10 +143,39 @@ main::before {
 }
 
 /* ===================================
+   MODE SELECTION - NEUBRUTALIST
+   =================================== */
+.mode-selection {
+    text-align: center;
+    margin-bottom: 25px;
+    padding: 25px;
+    background: var(--light-yellow);
+    border: var(--brutal-border-thick);
+    box-shadow: var(--brutal-shadow-large);
+    position: relative;
+}
+
+.mode-selection::before {
+    content: '🔀';
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    font-size: 2em;
+}
+
+.mode-buttons {
+    display: flex;
+    gap: 30px;
+    justify-content: center;
+    margin-top: 20px;
+    flex-wrap: wrap;
+}
+
+/* ===================================
    SECTIONS & TYPOGRAPHY
    =================================== */
 section {
-    margin-bottom: 40px;
+    margin-bottom: 25px;
     position: relative;
 }
 
@@ -175,9 +204,17 @@ section p {
 }
 
 /* ===================================
+   MODE NAVIGATION
+   =================================== */
+.mode-navigation {
+    margin-top: 20px;
+    text-align: left;
+}
+
+/* ===================================
    NEUBRUTALIST UPLOAD SECTION
    =================================== */
-.upload-area {
+.upload-area, .photo-upload-area {
     border: var(--brutal-border-thick);
     background: var(--light-yellow);
     padding: 50px;
@@ -185,6 +222,156 @@ section p {
     position: relative;
     box-shadow: var(--brutal-shadow-large);
     transition: all 0.2s ease;
+}
+
+.photo-upload-area {
+    margin-bottom: 20px;
+}
+
+.photo-upload-area small {
+    display: block;
+    color: var(--gray-dark);
+    margin-top: 10px;
+    font-size: 0.9em;
+    font-weight: 500;
+}
+
+/* ===================================
+   PROCESSING PROGRESS
+   =================================== */
+.processing-progress {
+    margin-top: 20px;
+    padding: 20px;
+    background: var(--light-yellow);
+    border: var(--brutal-border-thick);
+    box-shadow: var(--brutal-shadow-large);
+    text-align: center;
+}
+
+.processing-progress h4 {
+    color: var(--tech-blue);
+    margin-bottom: 15px;
+    font-weight: 800;
+    text-transform: uppercase;
+}
+
+.photo-instructions {
+    margin-top: 15px;
+    padding: 10px;
+    background: var(--white);
+    border: var(--brutal-border);
+    box-shadow: var(--brutal-shadow-small);
+    text-align: center;
+}
+
+.photo-instructions p {
+    margin: 0;
+    color: var(--gray-dark);
+    font-size: 0.9em;
+}
+
+#photoCount {
+    color: var(--primary-orange);
+    font-weight: 700;
+}
+
+/* ===================================
+   PHOTO MODAL
+   =================================== */
+.photo-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 3000;
+}
+
+.modal-backdrop {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(2px);
+}
+
+.modal-content {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: var(--white);
+    border: var(--brutal-border-thick);
+    box-shadow: var(--brutal-shadow-large);
+    max-width: 90vw;
+    max-height: 90vh;
+    overflow: hidden;
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    background: var(--light-yellow);
+    border-bottom: var(--brutal-border);
+}
+
+.modal-header h3 {
+    margin: 0;
+    color: var(--tech-blue);
+    font-weight: 800;
+    text-transform: uppercase;
+}
+
+.modal-close {
+    background: var(--coral-pink);
+    color: var(--white);
+    border: var(--brutal-border);
+    width: 30px;
+    height: 30px;
+    border-radius: 0;
+    font-size: 20px;
+    font-weight: 800;
+    cursor: pointer;
+    box-shadow: var(--brutal-shadow-small);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-close:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: 4px 4px 0px var(--black);
+}
+
+.modal-body {
+    padding: 20px;
+    text-align: center;
+}
+
+#modalImage {
+    max-width: 100%;
+    max-height: 70vh;
+    border: var(--brutal-border);
+    box-shadow: var(--brutal-shadow);
+    margin-bottom: 15px;
+}
+
+.modal-info {
+    background: var(--light-yellow);
+    padding: 10px;
+    border: var(--brutal-border);
+    box-shadow: var(--brutal-shadow-small);
+}
+
+.modal-info p {
+    margin: 0;
+    color: var(--tech-blue);
+    font-size: 0.9em;
+    font-weight: 600;
 }
 
 .upload-area:hover {
@@ -340,19 +527,20 @@ section p {
    =================================== */
 .dual-video-container {
     display: flex;
-    gap: 30px;
-    margin: 30px 0;
+    gap: 20px;
+    margin: 15px 0;
     flex-wrap: wrap;
 }
 
 .video-panel {
     flex: 1;
     min-width: 300px;
-    background: var(--white);
+    background: var(--warm-yellow);
     border: var(--brutal-border-thick);
     box-shadow: var(--brutal-shadow-large);
-    padding: 20px;
+    padding: 30px;
     position: relative;
+    text-align: center;
     transform: rotate(0.5deg);
 }
 
@@ -361,15 +549,11 @@ section p {
 }
 
 .video-panel::before {
-    content: '';
+    content: '🎥';
     position: absolute;
-    top: -8px;
-    left: -8px;
-    width: 25px;
-    height: 25px;
-    background: var(--primary-orange);
-    border: var(--brutal-border);
-    transform: rotate(45deg);
+    top: 15px;
+    left: 15px;
+    font-size: 2em;
 }
 
 .video-panel h4 {
@@ -379,8 +563,8 @@ section p {
     font-size: 1.3em;
     font-weight: 800;
     text-transform: uppercase;
-    background: var(--light-yellow);
-    padding: 8px;
+    background: var(--white);
+    padding: 8px 12px;
     border: var(--brutal-border);
     box-shadow: var(--brutal-shadow-small);
     transform: rotate(-1deg);
@@ -403,11 +587,422 @@ section p {
 }
 
 /* ===================================
+   PHOTO PREVIEW GRID
+   =================================== */
+.photo-preview-grid {
+    margin-top: 20px;
+    padding: 25px;
+    background: var(--light-yellow);
+    border: var(--brutal-border-thick);
+    box-shadow: var(--brutal-shadow-large);
+}
+
+.photo-preview-grid h4 {
+    color: var(--tech-blue);
+    margin-bottom: 20px;
+    font-size: 1.4em;
+    font-weight: 800;
+    text-transform: uppercase;
+}
+
+.photo-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 20px;
+    margin-bottom: 20px;
+}
+
+.photo-slot {
+    position: relative;
+    aspect-ratio: 4/3;
+    border: var(--brutal-border);
+    box-shadow: var(--brutal-shadow);
+    background: var(--white);
+    overflow: hidden;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.photo-slot:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: 6px 6px 0px var(--black);
+}
+
+.photo-slot img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.photo-slot.empty {
+    background: var(--gray-light);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--gray-dark);
+    font-weight: 600;
+    font-size: 0.9em;
+}
+
+.photo-slot-number {
+    position: absolute;
+    top: 5px;
+    left: 5px;
+    background: var(--primary-orange);
+    color: var(--white);
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 800;
+    border: 2px solid var(--black);
+}
+
+.pose-detection-status {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(0, 0, 0, 0.8);
+    color: var(--white);
+    padding: 5px;
+    font-size: 11px;
+    text-align: center;
+    font-weight: 600;
+}
+
+/* ===================================
+   POSE SELECTION SECTION
+   =================================== */
+.pose-selection-section {
+    padding: 30px;
+    background: var(--light-yellow);
+    border: var(--brutal-border-thick);
+    box-shadow: var(--brutal-shadow-large);
+    margin-bottom: 40px;
+}
+
+.detected-poses-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+    margin: 20px 0;
+}
+
+.detected-pose-item {
+    background: var(--white);
+    border: var(--brutal-border);
+    box-shadow: var(--brutal-shadow);
+    padding: 15px;
+    position: relative;
+    transition: all 0.2s ease;
+}
+
+.detected-pose-item:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: 6px 6px 0px var(--black);
+}
+
+.detected-pose-item.selected {
+    background: var(--warm-yellow);
+    border-color: var(--primary-orange);
+}
+
+.pose-checkbox {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 20px;
+    height: 20px;
+    accent-color: var(--primary-orange);
+}
+
+.pose-preview-small {
+    width: 100%;
+    height: 120px;
+    border: 2px solid var(--black);
+    box-shadow: var(--brutal-shadow-small);
+    margin-bottom: 10px;
+    background: var(--gray-light);
+}
+
+.pose-label-text {
+    font-weight: 700;
+    color: var(--tech-blue);
+    font-size: 14px;
+    text-align: center;
+}
+
+.selection-controls {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+    margin-top: 20px;
+    flex-wrap: wrap;
+}
+
+/* ===================================
+   PRACTICE SECTION - PHOTO MODE
+   =================================== */
+.practice-section {
+    padding: 25px;
+    background: var(--light-yellow);
+    border: var(--brutal-border-thick);
+    box-shadow: var(--brutal-shadow-large);
+    margin-bottom: 25px;
+}
+
+.practice-info {
+    margin-bottom: 15px;
+    text-align: center;
+}
+
+.current-pose-info {
+    display: inline-block;
+    background: var(--white);
+    border: var(--brutal-border);
+    box-shadow: var(--brutal-shadow);
+    padding: 20px;
+}
+
+.pose-info-inline {
+    display: flex;
+    gap: 30px;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.pose-label, .pose-progress {
+    font-weight: 700;
+    color: var(--tech-blue);
+    font-size: 1.1em;
+}
+
+.pose-info-inline .inline-score-display {
+    margin: 0;
+    transform: rotate(0deg);
+}
+
+.practice-progress {
+    display: inline-block;
+    margin: 10px 20px;
+    color: var(--tech-blue);
+    font-weight: 700;
+    font-size: 1.1em;
+}
+
+.pose-name-display {
+    position: absolute;
+    bottom: 10px;
+    left: 10px;
+    right: 10px;
+    background: rgba(0, 0, 0, 0.8);
+    color: var(--white);
+    padding: 8px;
+    text-align: center;
+    font-weight: 700;
+    font-size: 14px;
+    border: 2px solid var(--white);
+    text-transform: uppercase;
+}
+
+/* ===================================
+   UNIFIED CONTROL PANEL
+   =================================== */
+.unified-controls {
+    margin: 15px 0;
+}
+
+.all-controls-inline {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+/* ===================================
+   INTEGRATED SCORE DISPLAY IN PRACTICE
+   =================================== */
+
+.practice-score-display {
+    margin: 20px 0;
+    text-align: center;
+}
+
+.inline-score-display {
+    display: inline-block;
+    background: var(--white);
+    border: var(--brutal-border);
+    box-shadow: var(--brutal-shadow);
+    padding: 15px 25px;
+    transform: rotate(-0.5deg);
+}
+
+.current-score-inline {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+}
+
+#practiceOverallFeedback {
+    margin-top: 10px;
+    font-weight: 700;
+    color: var(--tech-blue);
+    font-size: 1.1em;
+}
+
+/* ===================================
+   PRACTICE CONTROL PANEL
+   =================================== */
+.practice-control-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-top: 10px;
+    align-items: center;
+}
+
+/* ===================================
+   POSE TRANSITION ANIMATION (INLINE)
+   =================================== */
+.pose-transition-inline {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.transition-overlay-inline {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(2px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: inherit;
+}
+
+.transition-content-inline {
+    text-align: center;
+    color: var(--white);
+    animation: transitionPulse 0.5s ease-in-out;
+}
+
+.countdown-number {
+    font-size: 4em;
+    font-weight: 900;
+    color: var(--primary-orange);
+    text-shadow: 3px 3px 0px var(--black);
+    margin-bottom: 10px;
+    animation: numberScale 0.5s ease-in-out;
+}
+
+.transition-text {
+    font-size: 1.2em;
+    font-weight: 700;
+    color: var(--warm-yellow);
+    text-shadow: 2px 2px 0px var(--black);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+@keyframes transitionPulse {
+    0% {
+        transform: scale(0.8);
+        opacity: 0;
+    }
+    50% {
+        transform: scale(1.1);
+        opacity: 1;
+    }
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+@keyframes numberScale {
+    0% {
+        transform: scale(0.5);
+    }
+    50% {
+        transform: scale(1.3);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+.current-score {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 25px;
+}
+
+.overall-scores {
+    margin-top: 20px;
+    padding: 20px;
+    background: var(--white);
+    border: var(--brutal-border);
+    box-shadow: var(--brutal-shadow);
+}
+
+.overall-scores h4 {
+    color: var(--tech-blue);
+    margin-bottom: 20px;
+    font-size: 1.3em;
+    font-weight: 800;
+    text-transform: uppercase;
+    text-align: center;
+}
+
+.scores-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 15px;
+}
+
+.pose-final-score {
+    text-align: center;
+    padding: 15px;
+    background: var(--light-yellow);
+    border: var(--brutal-border);
+    box-shadow: var(--brutal-shadow-small);
+}
+
+.pose-final-score .pose-score-circle {
+    width: 60px;
+    height: 60px;
+    margin: 0 auto 10px auto;
+}
+
+.pose-final-score .pose-score-text {
+    font-size: 1.2em;
+}
+
+/* ===================================
    POSE MARKING CONTROLS - NEUBRUTALIST
    =================================== */
 .pose-marking-controls {
-    margin-top: 30px;
-    padding: 30px;
+    margin-top: 20px;
+    padding: 25px;
     background: var(--light-yellow);
     border: var(--brutal-border-thick);
     box-shadow: var(--brutal-shadow-large);
@@ -534,63 +1129,6 @@ section p {
     border: 2px solid var(--black);
 }
 
-/* ===================================
-   COMPARISON INDICATORS - NEUBRUTALIST
-   =================================== */
-.comparison-indicators {
-    display: flex;
-    justify-content: space-around;
-    margin-top: 30px;
-    padding: 25px;
-    background: var(--tech-blue);
-    border: var(--brutal-border-thick);
-    box-shadow: var(--brutal-shadow-large);
-    gap: 20px;
-    flex-wrap: wrap;
-}
-
-.indicator-item {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 8px;
-}
-
-.indicator-light {
-    width: 30px;
-    height: 30px;
-    background: var(--gray-light);
-    border: var(--brutal-border);
-    box-shadow: var(--brutal-shadow-small);
-    transition: all 0.2s ease;
-    position: relative;
-}
-
-.indicator-light.active {
-    background: var(--secondary-orange);
-    transform: rotate(45deg);
-    box-shadow: 5px 5px 0px var(--black);
-}
-
-.indicator-light.warning {
-    background: var(--warm-yellow);
-    transform: rotate(45deg);
-    box-shadow: 4px 4px 0px var(--black);
-}
-
-.indicator-light.error {
-    background: var(--coral-pink);
-    transform: rotate(45deg);
-    box-shadow: 4px 4px 0px var(--black);
-}
-
-.indicator-item span {
-    font-size: 14px;
-    color: var(--white);
-    font-weight: 700;
-    text-transform: uppercase;
-    text-align: center;
-}
 
 /* ===================================
    SCORE SECTION - NEUBRUTALIST
@@ -830,15 +1368,80 @@ section p {
         width: 100%;
     }
 
+    .mode-buttons {
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .modal-content {
+        max-width: 95vw;
+        max-height: 95vh;
+    }
+
+    #modalImage {
+        max-height: 60vh;
+    }
+
+
+    .practice-controls {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .practice-controls button {
+        width: 100%;
+        max-width: 200px;
+    }
+
+    .unified-controls {
+        gap: 10px;
+    }
+
+    .all-controls-inline {
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .pose-info-inline {
+        flex-direction: column;
+        gap: 10px;
+        text-align: center;
+    }
+
+    .pose-info-inline .inline-score-display {
+        transform: rotate(0deg);
+        margin: 10px 0;
+    }
+
+    .inline-score-display {
+        padding: 12px 20px;
+        transform: rotate(0deg);
+    }
+
+
+    .countdown-number {
+        font-size: 3em;
+    }
+
+    .transition-text {
+        font-size: 1em;
+        letter-spacing: 0;
+    }
+
+    .transition-content-inline {
+        padding: 10px;
+    }
+
     .dual-video-container {
         flex-direction: column;
-        gap: 20px;
+        gap: 15px;
     }
 
     .video-panel {
         min-width: unset;
         width: 100%;
         transform: rotate(0deg);
+        padding: 20px;
     }
 
     .video-wrapper {
@@ -846,16 +1449,6 @@ section p {
         max-height: 250px;
     }
 
-    .comparison-indicators {
-        flex-wrap: wrap;
-        gap: 15px;
-        padding: 20px;
-    }
-
-    .indicator-item {
-        flex: 1;
-        min-width: 80px;
-    }
 
     .pose-score-circle {
         width: 80px;

@@ -24,6 +24,7 @@ class DancePostureApp {
         // Initialize elements
         this.initializeElements();
         this.setupEventListeners();
+        this.setupModeSelection();
         this.initializeMediaPipe();
     }
 
@@ -122,6 +123,33 @@ class DancePostureApp {
 
         // Mirror toggle
         this.mirrorToggle.addEventListener('click', this.toggleMirror.bind(this));
+    }
+
+    setupModeSelection() {
+        const videoModeBtn = document.getElementById('videoModeBtn');
+        const photoModeBtn = document.getElementById('photoModeBtn');
+
+        if (videoModeBtn && photoModeBtn) {
+            videoModeBtn.addEventListener('click', () => {
+                // Already on video mode page
+                this.showVideoMode();
+            });
+
+            photoModeBtn.addEventListener('click', () => {
+                // Navigate to photo mode
+                window.location.href = 'photo.html';
+            });
+        }
+    }
+
+    showVideoMode() {
+        const modeSelection = document.querySelector('.mode-selection');
+        const videoModeSection = document.getElementById('videoModeSection');
+
+        if (modeSelection) modeSelection.style.display = 'none';
+        if (videoModeSection) videoModeSection.style.display = 'block';
+
+        console.log('Video mode activated');
     }
 
     async initializeMediaPipe() {
