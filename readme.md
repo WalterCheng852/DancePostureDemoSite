@@ -1,76 +1,119 @@
 
+# Dance Posture Recognition App
 
-## Overview
-- You want to create an easy, quick demo for a posture recognition system focused on dance.
-- The system involves a small, human-like robot or a human as the reference dancer, and elderly users following the movements.
-- The demo will be implemented as a web app or phone app with an updated workflow.
+A web-based application that helps users learn dance movements by comparing their real-time camera feed with reference dance videos. The app uses MediaPipe pose detection to analyze and score dance postures in real-time.
 
-## Workflow
-1. **User Uploads a Video**:
-   - The user uploads a short video (e.g., MP4 format) of either a robot or a human performing a dance routine.
-   - The system processes this video to extract the dancer's (robot or human) postures as a "standard template," with no restriction on the subject being only a robot—human dancers are also accepted.
+## Features
 
-2. **Camera Activation for Elderly**:
-   - The app opens the device's camera (webcam or phone camera) to capture the elderly user's real-time dance movements.
-   - The elderly user follows the dance routine as shown in the uploaded video (performed by either a robot or human).
+- **Video Upload**: Upload dance reference videos (MP4 format)
+- **Real-time Pose Detection**: Uses MediaPipe to detect human poses from video frames
+- **Live Camera Feed**: Capture your movements through webcam
+- **Instant Scoring**: Get real-time feedback on how well you match the reference pose
+- **Pose Marking**: Mark specific poses from uploaded videos for practice
+- **Mirror Mode**: Toggle between normal and mirrored view
 
-3. **Real-Time Detection and Scoring**:
-   - The system uses real-time posture detection to compare the elderly user's movements with the template postures from the uploaded video.
-   - It provides instant feedback by assigning marks based on the similarity between the elderly user's posture and the reference dancer's (robot or human) posture.
-   - The score is displayed on the app interface.
+## How It Works
 
-## Technical Assumptions
-- **Dancer Characteristics**:
-  - The reference dancer can be a small, human-like robot (e.g., similar to NAO or Pepper) or a human.
-  - For robots, the human-like structure allows MediaPipe to detect postures effectively.
-  - For humans, MediaPipe's pre-trained Pose Estimation is well-suited, ensuring compatibility.
+1. **Upload Reference Video**: Upload a dance video containing the movements you want to learn
+2. **Mark Target Poses**: Scrub through the video and mark specific poses you want to practice
+3. **Start Practice**: Activate your camera and follow the target poses
+4. **Get Feedback**: Receive real-time scores and feedback on your performance
 
-- **Technology Stack**:
-  - The demo will use HTML, JavaScript, and MediaPipe JS for a web-based or mobile-friendly solution.
-  - A simple similarity comparison (e.g., cosine similarity) will be used instead of complex machine learning models to keep the demo quick and easy.
+## Technology
 
-- **User Experience**:
-  - The interface will be minimal, featuring video upload, camera activation, and real-time score display.
-  - No support for adding new postures in this demo (can be added later with further development).
-  - The system should handle both robot and human video inputs seamlessly.
+- **Frontend**: HTML5, CSS3, JavaScript
+- **Pose Detection**: MediaPipe Pose (WebAssembly)
+- **Camera Access**: WebRTC getUserMedia API
+- **Scoring**: Landmark distance similarity comparison
 
-## Constraints
-- You have zero coding experience but will use AI assistance (e.g., Grok, ChatGPT) to guide the development.
-- The goal is an easy, quick demo, prioritizing simplicity and speed over full functionality.
-- The system should run locally on a browser, avoiding cloud dependencies for simplicity.
+## Getting Started
 
-## Next Steps
-- I will provide a detailed plan, time estimate, and cost estimate based on this updated understanding.
-- I will avoid generating code until you request it, focusing on planning and clarification first.
-- Please confirm if this aligns with your vision or if you have additional requirements (e.g., specific features, mobile-only preference).
+### Prerequisites
+- Modern web browser with camera access
+- Local web server (required for camera access)
 
----
+### Installation & Setup
 
-## Update (2025-09-05)
-### Current Behavior / 目前行為
-- **Real MediaPipe on Reference Video**: Reference video frames are processed by MediaPipe Pose in real time; left panel shows blue pose landmarks only (no video in comparison area).
-- **Single Pose Only**: The app now supports marking and practicing only one pose (`Pose 1`). All Pose 2 UI and logic have been removed.
-- **Marking Flow**: Upload video → scrub to target time → click "標記為姿勢1" → a real MediaPipe detection runs on that frame and stores landmarks.
-- **Practice Mode**: Start camera → left shows target pose skeleton; right shows your camera with green skeleton and live score.
+1. **Clone or Download** this repository to your local machine
 
-### How to Run Locally / 本地運行方式
-1. Open terminal and start a local server:
-   - `python3 -m http.server 5500 --directory /Users/chauwacheng/Desktop/dance_posture`
-2. Open the app in a browser:
-   - `http://localhost:5500/index.html`
-3. Steps:
-   - Upload a dance video → mark Pose 1 → Start Camera → practice.
+2. **Start a Local Server**:
+   ```bash
+   # Navigate to the project directory
+   cd /path/to/dance_posture
+   
+   # Start a local server (choose one method):
+   
+   # Method 1: Python
+   python3 -m http.server 5500
+   
+   # Method 2: Node.js (if you have it installed)
+   npx http-server -p 5500
+   
+   # Method 3: PHP (if you have it installed)
+   php -S localhost:5500
+   ```
 
-### Controls / 控制
-- Upload: choose video file
-- Scrubber: fine-tune video time; Play / Pause buttons control the upload video
-- Mark: `標記為姿勢1` to capture pose at current frame
-- Camera: `啟動相機` / `停止相機`
-- Mirror: `鏡像視圖`
-- Clear: `清除全部`
-- Details: `顯示詳情` shows a modal with pose preview and info
+3. **Open the App**:
+   - Navigate to `http://localhost:5500` in your browser
+   - Allow camera access when prompted
 
-### Notes / 注意
-- Camera works on `localhost` or HTTPS only.
-- Scoring uses a simple landmark distance similarity; good (≥80), average (≥60), poor (<60).
-- Reference panel in comparison area draws landmarks only; the actual video is visible in the upload section for marking.
+### Usage Guide
+
+#### Step 1: Upload Reference Video
+- Click "Choose File" to upload a dance video (MP4 format recommended)
+- Use the video scrubber to navigate to the desired pose
+- Click "標記為姿勢1" (Mark as Pose 1) to capture the pose at the current frame
+
+#### Step 2: Start Practice
+- Click "啟動相機" (Start Camera) to begin live pose detection
+- The left panel shows your target pose (blue skeleton)
+- The right panel shows your live camera feed with pose overlay (green skeleton)
+
+#### Step 3: Follow and Improve
+- Match your pose to the target pose shown on the left
+- Watch your real-time score update (0-100%)
+- Use "鏡像視圖" (Mirror View) to see yourself mirrored if needed
+
+### Controls
+
+| Control | Description |
+|---------|-------------|
+| **Video Upload** | Choose video file to use as reference |
+| **Play/Pause** | Control reference video playback |
+| **Scrubber** | Fine-tune video position for precise pose marking |
+| **Mark Pose** | Capture pose at current video frame |
+| **Start/Stop Camera** | Begin or end live pose detection |
+| **Mirror Toggle** | Switch between normal and mirrored view |
+| **Clear All** | Reset all marked poses |
+| **Show Details** | View pose information and preview |
+
+### Scoring System
+
+- **Excellent (80-100%)**: 優秀！Great job!
+- **Good (60-79%)**: 不錯！Keep it up!
+- **Needs Practice (40-59%)**: 繼續努力 - Keep practicing
+- **Poor (0-39%)**: 多練習 - More practice needed
+
+### Troubleshooting
+
+**Camera not working?**
+- Ensure you're accessing the app via `localhost` or `https://`
+- Check browser permissions for camera access
+- Try refreshing the page
+
+**No pose detected?**
+- Make sure you're using videos with clear human figures
+- Ensure good lighting in your camera view
+- Try different video frames if pose detection fails
+
+**Performance issues?**
+- Close other browser tabs to free up resources
+- Use a modern browser (Chrome, Firefox, Safari, Edge)
+- Ensure stable internet connection for MediaPipe loading
+
+### Technical Notes
+
+- **Pose Detection**: Uses MediaPipe Pose for real-time human pose estimation
+- **Scoring**: Based on landmark distance similarity comparison
+- **Browser Support**: Works on modern browsers with WebAssembly support
+- **Camera Requirements**: Requires HTTPS or localhost for camera access
